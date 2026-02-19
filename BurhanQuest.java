@@ -627,9 +627,239 @@ public class BurhanQuest {
                     break;
                 }
             } else if (pilihan.equals("7")) {
+                while (true) {
+                    System.out.println("Filter daftar quest");
+                    System.out.println("1. Filter berdasarkan status");
+                    System.out.println("2. Filter berdasarkan tingkat kesulitan");
+                    System.out.println("X. Kembali ke menu utama");
+                    System.out.print("Masukkan tipe filter: ");
+                    String filter = scanner.nextLine().trim();
 
+                    if (filter.equalsIgnoreCase("x")) {
+                        break;
+                    }
+                    
+                    if (!filter.equals("1") && !filter.equals("2")) {
+                        System.out.println("Pilihan tidak valid. Harap masukkan pilihan dengan benar.");
+                        continue;
+                    }
+
+                    String statusInput = "";
+                    String diffInput = "";
+
+                    if (filter.equals("1")) {
+                        System.out.print("Masukkan status quest (tersedia/diambil/selesai), masukkan 'x' untuk kembali: ");
+                            statusInput = scanner.nextLine().trim().toLowerCase();
+
+                            if (statusInput.equals("x")) continue;
+
+                            if (!statusInput.equals("tersedia") &&
+                                !statusInput.equals("diambil") &&
+                                !statusInput.equals("selesai")) {
+
+                                System.out.println("Pilihan tidak valid.");
+                                continue;
+                            }
+                    } else {
+                        System.out.print("Masukkan tingkat kesulitan (mudah/menengah/sulit), masukkan 'x' untuk kembali: ");
+                        diffInput = scanner.nextLine().trim().toLowerCase();
+
+                        if (diffInput.equals("x")) continue;
+
+                        if (!diffInput.equals("mudah") &&
+                            !diffInput.equals("menengah") &&
+                            !diffInput.equals("sulit")) {
+
+                            System.out.println("Pilihan tidak valid.");
+                            continue;
+                        }
+                    }
+                    System.out.println("\nDaftar quest terfilter: ");
+
+                    Scanner questScanner = new Scanner(dataQuest);
+
+                    while (questScanner.hasNextLine()) {
+                        String line = questScanner.nextLine();
+
+                        int idx = line.indexOf("|");
+                        String id = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String nama = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String deskripsi = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String reward = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String bonus = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String kesulitan = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        String status = line;
+
+                        // Logika filter
+                        boolean cocok = false;
+                        
+                        if (filter.equals("1")) {
+                            if (statusInput.equals("diambil")) {
+                                cocok = status.startsWith("diambil");
+                            } else {
+                                cocok = status.equals(statusInput);
+                            }
+                        } else {
+                            cocok = kesulitan.equals(diffInput);
+                        }
+
+                        if (cocok) {
+                            String bintang = "";
+                            if (kesulitan.equals("mudah")) {
+                                bintang = "\u2605";
+                            } else if (kesulitan.equals("menengah")) {
+                                bintang = "\u2605\u2605";
+                            } else if (kesulitan.equals("sulit")) {
+                                bintang = "\u2605\u2605\u2605";
+                            }
+
+                            String statusTampil = "";
+                            if (status.equals("tersedia")) {
+                                statusTampil = "tersedia \ud83d\udfe2";
+                            } else if (status.startsWith("diambil")) {
+                                statusTampil = status + " \u231b";
+                            } else if (status.equals("selesai")) {
+                                statusTampil = "selesai \ud83c\udfc6";
+                            }
+
+                            System.out.println("ID Quest: " + id);
+                            System.out.println("Nama Quest: " + nama);
+                            System.out.println("Deskripsi Quest: " + deskripsi);
+                            System.out.println("Reward Quest: " + reward + " koin");
+                            System.out.println("Bonus Exp Quest: " + bonus + " poin exp");
+                            System.out.println("Tingkat Kesulitan Quest: " + bintang);
+                            System.out.println("Status Quest: " + statusTampil);
+                            System.out.println();
+                        }
+                    }
+                    questScanner.close();
+                }
             } else if (pilihan.equals("8")) {
+                while (true) {
+                    System.out.println("Filter daftar pengembara");
+                    System.out.println("1. Filter berdasarkan status");
+                    System.out.println("2. Filter berdasarkan rentang level");
+                    System.out.println("X. Kembali ke menu utama");
+                    System.out.print("Masukkan tipe filter: ");
+                    String filter = scanner.nextLine().trim();
 
+                    if (filter.equalsIgnoreCase("x")) {
+                        break;
+                    }
+
+                    if (!filter.equals("1") && !filter.equals("2")) {
+                        System.out.println("Pilihan tidak valid.");
+                        continue;
+                    }
+
+                    String statusInput = "";
+                    int batasBawah = 0;
+                    int batasAtas = 0;
+
+                    if (filter.equals("1")) {
+                        System.out.print("Masukkan status pengembara (kosong/dalam quest), masukkan 'x' untuk kembali: ");
+                        statusInput = scanner.nextLine().trim().toLowerCase();
+
+                        if (statusInput.equals("x")) continue;
+
+                        if (!statusInput.equals("kosong") &&
+                            !statusInput.equals("dalam quest")) {
+
+                            System.out.println("Pilihan tidak valid.");
+                            continue;
+                        }
+                    } else {
+                        System.out.print("Masukkan batas bawah level: ");
+                        String bawahStr = scanner.nextLine().trim();
+                        if (bawahStr.equalsIgnoreCase("x")) continue;
+
+                        System.out.print("Masukkan batas atas level: ");
+                        String atasStr = scanner.nextLine().trim();
+                        if (atasStr.equalsIgnoreCase("x")) continue;
+
+                        if (!bawahStr.matches("\\d+") || !atasStr.matches("\\d+")) {
+                            System.out.println("Rentang level tidak valid.");
+                            continue;
+                        }
+
+                        batasBawah = Integer.parseInt(bawahStr);
+                        batasAtas = Integer.parseInt(atasStr);
+
+                        if (batasBawah < 1 || batasAtas > 20 || batasBawah > batasAtas) {
+                            System.out.println("Rentang level tidak valid.");
+                            continue;
+                        }
+                    }
+
+                    System.out.println("\nDaftar pengembara terfilter: ");
+                    Scanner pengembaraScanner = new Scanner(dataPengembara);
+
+                    while (pengembaraScanner.hasNextLine()) {
+                        String line = pengembaraScanner.nextLine();
+
+                        int idx = line.indexOf("|");
+                        String id = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String nama = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String levelStr = line.substring(0, idx);
+                        int level = Integer.parseInt(levelStr);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String exp = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        String status = line;
+
+                        boolean cocok = false;
+
+                        if (filter.equals("1")) {
+                            cocok = status.equals(statusInput);
+                        } else {
+                            cocok = (level >= batasBawah && level <= batasAtas);
+                        }
+                        
+                        if (cocok) {
+
+                            String statusTampil = "";
+                            if (status.equals("kosong")) {
+                                statusTampil = "kosong \u2705";
+                            } else if (status.equals("dalam quest")) {
+                                statusTampil = "dalam quest \u274c";
+                            }
+
+                            System.out.println("ID Pengembara: " + id);
+                            System.out.println("Nama Pengembara: " + nama);
+                            System.out.println("Level Pengembara: " + level);
+                            System.out.println("Exp Pengembara: " + exp + " poin exp");
+                            System.out.println("Status Pengembara: " + statusTampil);
+                            System.out.println();
+                        }
+                    }
+                    pengembaraScanner.close();
+                }
             } else if (pilihan.equals("9")) {
 
             } else if (pilihan.equals("10")) {
