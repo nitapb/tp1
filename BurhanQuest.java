@@ -840,7 +840,7 @@ public class BurhanQuest {
                         } else {
                             cocok = (level >= batasBawah && level <= batasAtas);
                         }
-                        
+
                         if (cocok) {
 
                             String statusTampil = "";
@@ -861,9 +861,303 @@ public class BurhanQuest {
                     pengembaraScanner.close();
                 }
             } else if (pilihan.equals("9")) {
+                while (true) {
+                    System.out.println("Urutkan daftar quest");
 
+                    System.out.println("1. Berdasarkan tingkat kesulitan");
+                    System.out.println("2. Berdasarkan reward");
+                    System.out.println("3. Berdasarkan bonus exp");
+                    System.out.println("X. Kembali ke menu utama");
+                    System.out.print("Masukkan input: ");
+
+                    String input = scanner.nextLine().trim();
+
+                    if (input.equalsIgnoreCase("x")) break;
+
+                    if (!input.equals("1") && !input.equals("2") && !input.equals("3")) {
+                        System.out.println("Pilihan tidak valid. Harap masukkan pilihan dengan benar.");
+                        continue;
+                    }
+
+                    System.out.print("Masukkan order urutan (asc/desc), masukkan x untuk kembali ke menu utama: ");
+                    String order = scanner.nextLine().trim().toLowerCase();
+
+                    if (order.equals("x")) continue;
+
+                    if (!order.equals("asc") && !order.equals("desc")) {
+                        System.out.println("Urutan tidak valid. Harap masukkan urutan dengan benar.");
+                        continue;
+                    }
+
+                    System.out.println("\nDaftar quest terurut: ");
+
+                    int totalQuest = 0;
+                    Scanner counter = new Scanner(dataQuest);
+                    while (counter.hasNextLine()) {
+                        counter.nextLine();
+                        totalQuest++;
+                    }
+                    counter.close();
+
+                    String sudahCetak = "";
+                    int tercetak = 0;
+
+                    while (tercetak < totalQuest) {
+                        Scanner questScanner = new Scanner(dataQuest);
+
+                        String kandidatLine = "";
+                        int kandidatNilai = 0;
+                        boolean pertama = true;
+
+                        while (questScanner.hasNextLine()) {
+                            String originalLine = questScanner.nextLine();
+                            String line = originalLine;
+
+                            int idx = line.indexOf("|");
+                            String id = line.substring(0, idx);
+
+                            if (sudahCetak.contains(id + "|")) continue;
+                            
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String nama = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            int reward = Integer.parseInt(line.substring(0, idx));
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            int bonus = Integer.parseInt(line.substring(0, idx));
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String kesulitan = line.substring(0, idx);
+
+                            int nilai = 0;
+
+                            if (input.equals("1")) {
+                                if (kesulitan.equals("mudah")) nilai = 1;
+                                else if (kesulitan.equals("menengah")) nilai = 2;
+                                else nilai = 3;
+                            } else if (input.equals("2")) {
+                                nilai = reward;
+                            } else {
+                                nilai = bonus;
+                            }
+
+                            if (pertama) {
+                                kandidatNilai = nilai;
+                                kandidatLine = originalLine;
+                                pertama = false;
+                            } else {
+                                if (order.equals("asc")) {
+                                    if (nilai < kandidatNilai) {
+                                        kandidatNilai = nilai;
+                                        kandidatLine = originalLine;
+                                    }
+                                } else {
+                                    if (nilai > kandidatNilai) {
+                                        kandidatNilai = nilai;
+                                        kandidatLine = originalLine;
+                                    }
+                                }
+                            }
+                        }
+                        questScanner.close();
+
+                        if (!kandidatLine.equals("")) {
+                            String line = kandidatLine;
+
+                            int idx = line.indexOf("|");
+                            String id = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String nama = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String deskripsi = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String rewardStr = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String bonusStr = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String kesulitan = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            String status = line;
+
+                            String bintang = "";
+                            if (kesulitan.equals("mudah")) bintang = "\u2605";
+                            else if (kesulitan.equals("menengah")) bintang = "\u2605\u2605";
+                            else bintang = "\u2605\u2605\u2605";
+
+                            String statusTampil = "";
+                            if (status.equals("tersedia")) statusTampil = "tersedia \ud83d\udfe2";
+                            else if (status.startsWith("diambil")) statusTampil = status + " \u231b";
+                            else statusTampil = "selesai \ud83c\udfc6";
+
+                            System.out.println("ID Quest: " + id);
+                            System.out.println("Nama Quest: " + nama);
+                            System.out.println("Deskripsi Quest: " + deskripsi);
+                            System.out.println("Reward Quest: " + rewardStr + " koin");
+                            System.out.println("Bonus Exp Quest: " + bonusStr + " poin exp");
+                            System.out.println("Tingkat Kesulitan Quest: " + bintang);
+                            System.out.println("Status Quest: " + statusTampil);
+                            System.out.println();
+
+                            sudahCetak += id + "|";
+                            tercetak++;
+                        }
+                    }
+                }
             } else if (pilihan.equals("10")) {
+                while (true) {
+                    System.out.println("Urutkan daftar pengembara");
+                    System.out.println("1. Berdasarkan nama");
+                    System.out.println("2. Berdasarkan level");
+                    System.out.println("3. Berdasarkan exp");
+                    System.out.println("X. Kembali ke menu utama");
 
+                    String input = scanner.nextLine().trim();
+
+                    if (input.equalsIgnoreCase("x")) break;
+
+                    if (!input.equals("1") && !input.equals("2") && !input.equals("3")) {
+                        System.out.println("Pilihan tidak valid. Harap masukkan urutan dengan benar.");
+                        continue;
+                    }
+
+                    System.out.print("Masukkan order urutan (asc/desc), masukkan x untuk kembali ke menu utama: ");
+                    String order = scanner.nextLine().trim().toLowerCase();
+
+                    if (order.equals("x")) continue;
+
+                    if (!order.equals("asc") && !order.equals("desc")) {
+                        System.out.println("Urutan tidak valid. Harap masukkan urutan dengan benar.");
+                        continue;
+                    }
+                    
+                    System.out.println("\nDaftar pengembara terurut: ");
+
+                    int total = 0;
+                    Scanner counter = new Scanner(dataPengembara);
+
+                    while (counter.hasNextLine()) {
+                        counter.nextLine();
+                        total++;
+                    }
+                    counter.close();
+
+                    String sudahCetak = "";
+                    int tercetak = 0;
+
+                    while (tercetak < total) {
+                        Scanner pengembaraScanner = new Scanner(dataPengembara);
+
+                        String kandidatLine = "";
+                        String kandidatNama = "";
+                        int kandidatNilai = 0;
+                        boolean pertama = true;
+
+                        while (pengembaraScanner.hasNextLine()) {
+                            String originalLine = pengembaraScanner.nextLine();
+                            String line = originalLine;
+
+                            int idx = line.indexOf("|");
+                            String id = line.substring(0, idx);
+
+                            if (sudahCetak.contains(id + "|")) continue;
+
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String nama = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            int level = Integer.parseInt(line.substring(0, idx));
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            int exp = Integer.parseInt(line.substring(0, idx));
+
+                            if (pertama) {
+                                kandidatLine = originalLine;
+                                kandidatNama = nama;
+                                kandidatNilai = (input.equals("1")) ? 0 : (input.equals("2") ? level : exp);
+                                pertama = false;
+                            } else {
+                                boolean ambil = false;
+
+                                if (input.equals("1")) {
+                                    int cmp = nama.compareToIgnoreCase(kandidatNama);
+                                    if (order.equals("asc") && cmp < 0) ambil = true;
+                                    if (order.equals("desc") && cmp > 0) ambil = true;
+                                } else {
+                                    int nilai = (input.equals("2")) ? level : exp;
+                                    if (order.equals("asc") && nilai < kandidatNilai) ambil = true;
+                                    if (order.equals("desc") && nilai > kandidatNilai) ambil = true;
+                                }
+
+                                if (ambil) {
+                                    kandidatLine = originalLine;
+                                    kandidatNama = nama;
+                                    kandidatNilai = (input.equals("1")) ? 0 : (input.equals("2") ? level : exp);
+                                }
+                            }
+                        }
+                        pengembaraScanner.close();
+
+                        if (!kandidatLine.equals("")) {
+                            String line = kandidatLine;
+
+                            int idx = line.indexOf("|");
+                            String id = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String nama = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String level = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            idx = line.indexOf("|");
+                            String exp = line.substring(0, idx);
+                            line = line.substring(idx + 1);
+
+                            String status = line;
+
+                            String statusTampil = "";
+                            if (status.equals("kosong")) statusTampil = "kosong \u2705";
+                            else statusTampil = "dalam quest \u274c";
+
+                            System.out.println("ID Pengembara: " + id);
+                            System.out.println("Nama Pengembara: " + nama);
+                            System.out.println("Level Pengembara: " + level);
+                            System.out.println("Exp Pengembara: " + exp + " poin exp");
+                            System.out.println("Status Pengembara: " + statusTampil);
+                            System.out.println();
+
+                            sudahCetak += id + "|";
+                            tercetak++;
+                        }
+                    }
+                }
             } else if (pilihan.equals("11")) {
                 break;
             } else {
