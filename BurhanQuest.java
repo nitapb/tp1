@@ -346,9 +346,286 @@ public class BurhanQuest {
             } else if (pilihan.equals("4")) {
 
             } else if (pilihan.equals("5")) {
+                while (true) {
+                    System.out.print("Masukkan ID Quest yang ingin diambil (atau 'X'/'x' untuk kembali): ");
+                    String inputIdQuest = scanner.nextLine().trim();
 
+                    if (inputIdQuest.equalsIgnoreCase("x")) {
+                        break;
+                    }
+
+                    inputIdQuest = inputIdQuest.toUpperCase();
+
+                    Scanner questScanner = new Scanner(dataQuest);
+                    boolean questFound = false;
+                    boolean questValid = false;
+
+                    String tingkatKesulitan = "";
+                    String updateDataQuest = "";
+
+                    while (questScanner.hasNextLine()) {
+                        String line = questScanner.nextLine();
+
+                        int idx = line.indexOf("|");
+                        String id = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String kesulitan = line.substring(0, idx);
+                        String status = line.substring(idx + 1);
+
+                        if (id.equalsIgnoreCase(inputIdQuest)) {
+                            questFound = true;
+
+                            if (!status.equals("tersedia")) {
+                                break;
+                            }
+
+                            questValid = true;
+                            tingkatKesulitan = kesulitan;
+                        }
+                    }
+                    questScanner.close();
+
+                    if (!questFound || !questValid) {
+                        System.out.println("Quest tidak ditemukan atau sudah diambil/selesai.");
+                        continue;
+                    }
+
+                    System.out.print("Masukkan ID Pengembara yang akan mengambil quest (atau 'X'/'x' untuk kembali): ");
+                    String inputIdPengembara = scanner.nextLine().trim();
+
+                    if (inputIdPengembara.equalsIgnoreCase("x")) {
+                        continue;
+                    }
+                    
+                    inputIdPengembara = inputIdPengembara.toUpperCase();
+                    Scanner pengembaraScanner = new Scanner(dataPengembara);
+                    boolean pengembaraFound = false;
+                    boolean pengembaraValid = false;
+
+                    String updatedDataPengembara = "";
+
+                    while (pengembaraScanner.hasNextLine()) {
+                        String line = pengembaraScanner.nextLine();
+
+                        int idx = line.indexOf("|");
+                        String id = line.substring(0, idx);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        String levelStr = line.substring(0, idx);
+                        int level = Integer.parseInt(levelStr);
+                        line = line.substring(idx + 1);
+
+                        idx = line.indexOf("|");
+                        line = line.substring(idx + 1);
+
+                        String status = line;
+
+                        if (id.equalsIgnoreCase((inputIdPengembara))) {
+                            pengembaraFound = true;
+
+                            if (!status.equals("kosong")) {
+                                break;
+                            }
+
+                            boolean levelOk = true;
+
+                            if (tingkatKesulitan.equals("menengah") && level < 6) {
+                                levelOk = false;
+                            } else if (tingkatKesulitan.equals("sulit") && level < 16) {
+                                levelOk = false;
+                            }
+
+                            if (!levelOk) {
+                                break;
+                            }
+
+                            pengembaraValid = true;
+                        }
+                    }
+                    pengembaraScanner.close();
+
+                    if (!pengembaraFound || !pengembaraValid) {
+                        System.out.println("Pengembara tidak ditemukan atau tidak memenuhi persyaratan untuk mengambil quest.");
+                        continue;
+                    }
+
+                    // Update Quest
+
+                    Scanner updateQuest = new Scanner(dataQuest);
+                    while (updateQuest.hasNextLine()) {
+                        String line = updateQuest.nextLine();
+
+                        if (line.startsWith(inputIdQuest + "|")) {
+                            int lastIdx = line.lastIndexOf("|");
+                            line = line.substring(0, lastIdx + 1) + "diambil-" + inputIdPengembara;
+                        }
+
+                        if (!updateDataQuest.equals("")) {
+                            updateDataQuest += "\n";
+                        }
+                        updateDataQuest += line;
+                    }
+                    updateQuest.close();
+                    dataQuest = updateDataQuest;
+
+                    // Update Pengembara
+
+                    Scanner updatePengembara = new Scanner(dataPengembara);
+                    while (updatePengembara.hasNextLine()) {
+                        String line = updatePengembara.nextLine();
+
+                        if (line.startsWith((inputIdPengembara + "|"))) {
+                            int lastIdx = line.lastIndexOf("|");
+                            line = line.substring(0, lastIdx + 1) + "dalam quest";
+                        }
+
+                        if (!updatedDataPengembara.equals("")) {
+                            updatedDataPengembara += "\n";
+                        }
+                        updatedDataPengembara += line;
+                    }
+                    updatePengembara.close();
+                    dataPengembara = updatedDataPengembara;
+
+                    System.out.println("Quest berhasil diambil");
+                    break;
+                }
             } else if (pilihan.equals("6")) {
+                while (true) { 
+                    System.out.print("Masukkan ID Quest yang ingin diselesaikan (atau 'X'/'x' untuk kembali): ");
+                    String inputIdQuest = scanner.nextLine().trim();
 
+                    if (inputIdQuest.equalsIgnoreCase(("x"))) {
+                        break;
+                    }
+
+                    boolean questValid = false;
+                    String updateDataQuest = "";
+                    String idPengembara = "";
+                    int bonusExp = 0;
+
+                    Scanner questScanner = new Scanner(dataQuest);
+
+                    while (questScanner.hasNextLine()) {
+                        String line = questScanner.nextLine();
+
+                        int idx1 = line.indexOf("|");
+                        String idQuest = line.substring(0, idx1);
+
+                        if (idQuest.equalsIgnoreCase((inputIdQuest))) {
+                            int lastIdx = line.lastIndexOf("|");
+                            String status = line.substring(lastIdx + 1);
+
+                            if (status.startsWith("diambil-")) {
+                                questValid = true;
+
+                                idPengembara = status.substring(8);
+
+                                int idx2 = line.indexOf("|", idx1 + 1);
+                                int idx3 = line.indexOf("|", idx2 + 1);
+                                int idx4 = line.indexOf("|", idx3 + 1);
+                                int idx5 = line.indexOf("|", idx4 + 1);
+
+                                bonusExp = Integer.parseInt(line.substring(idx4 + 1, idx5));
+
+                                line = line.substring(0, lastIdx + 1) + "selesai";
+                            }
+                        }
+
+                        updateDataQuest += line;
+                        if (questScanner.hasNextLine()) {
+                            updateDataQuest += "\n";
+                        }
+                    }
+                    questScanner.close();
+
+                    if (!questValid) {
+                        System.out.println("Quest tidak ditemukan atau belum diambil/selesai.");
+                        continue;
+                    }
+
+                    dataQuest = updateDataQuest;
+
+                    String updateDataPengembara = "";
+                    Scanner pengembaraScanner = new Scanner (dataPengembara);
+
+                    int totalExp = 0;
+                    int levelBaru = 0;
+                    int levelLama = 0;
+
+                    while (pengembaraScanner.hasNextLine()) {
+                        String line = pengembaraScanner.nextLine();
+
+                        int idx1 = line.indexOf("|");
+                        String idPeng = line.substring(0, idx1);
+
+                        if (idPeng.equalsIgnoreCase(idPengembara)) {
+                            int idx2 = line.indexOf("|", idx1 + 1);
+                            int idx3 = line.indexOf("|", idx2 + 1);
+                            int idx4 = line.indexOf("|", idx3 + 1);
+                            int idx5 = line.indexOf("|", idx4 + 1);
+
+                            levelLama = Integer.parseInt(line.substring(idx2 + 1, idx3));
+                            int level = levelLama;
+
+                            int exp = Integer.parseInt(line.substring(idx3 + 1, idx4));
+                            exp += bonusExp;
+
+                            if (exp > 1310720000) {
+                                exp = 1310720000;
+                            }
+
+                            int syaratLevel = 5000;
+                            for (int i = 1; i < level; i++) {
+                                syaratLevel *= 2;
+                            }
+
+                            if (level < 20 && exp >= syaratLevel) {
+                                level++;
+                            }
+
+                            totalExp = exp;
+                            levelBaru = level;
+
+                            line = line.substring (0, idx2 + 1)
+                                    + level + "|" + exp + "|" + "kosong";
+                        }
+                        updateDataPengembara += line;
+                        if (pengembaraScanner.hasNextLine()) {
+                            updateDataPengembara += "\n";
+                        }
+                    }
+                    pengembaraScanner.close();
+
+                    dataPengembara = updateDataPengembara;
+
+                    System.out.println("Quest berhasil diselesaikan!");
+                    System.out.println("Exp didapatkan: " + bonusExp);
+                    System.out.println("Total Exp: " + totalExp);
+
+                    if (levelBaru > levelLama) {
+                        System.out.println("Level pengembara naik menjadi: " + levelBaru);
+                    }
+                    break;
+                }
             } else if (pilihan.equals("7")) {
 
             } else if (pilihan.equals("8")) {
